@@ -9,27 +9,45 @@ const CartItem = ({ onContinueShopping }) => {
 
   // Calculate total amount for all products in the cart
   const calculateTotalAmount = () => {
- 
+    return cart.reduce((total, item) => {
+      const cost = parseFloat(item.cost.replace('$', '')); // Convert cost to a number
+      return total + (cost * item.quantity);
+    }, 0);
   };
 
+  // Handle user's intent to continue shopping
   const handleContinueShopping = (e) => {
-   
+    if (onContinueShopping) {
+      onContinueShopping(e); // Pass event to parent component if provided
+    } else {
+      // Handle default behavior if no callback provided (e.g., navigate)
+      console.log('Continue shopping functionality not provided by parent component');
+    }
   };
 
-
-
+  // Increment quantity of an item in the cart
   const handleIncrement = (item) => {
+    dispatch(updateQuantity({ name: item.name, quantity: item.quantity + 1 }));
   };
 
+  // Decrement quantity of an item in the cart (with quantity validation)
   const handleDecrement = (item) => {
-   
+    if (item.quantity > 1) {
+      dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1 }));
+    } else {
+      console.warn(`Cannot decrement quantity of '${item.name}' below 1`);
+    }
   };
 
+  // Remove an item from the cart
   const handleRemove = (item) => {
+    dispatch(removeItem(item));
   };
 
   // Calculate total cost based on quantity for an item
   const calculateTotalCost = (item) => {
+    const cost = parseFloat(item.cost.replace('$', '')); // Convert cost to a number
+    return cost * item.quantity;
   };
 
   return (
@@ -64,5 +82,3 @@ const CartItem = ({ onContinueShopping }) => {
 };
 
 export default CartItem;
-
-
